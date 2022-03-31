@@ -1,0 +1,145 @@
+---
+title: "HW1"
+author: "Minh Luc, Devin Pham, Kyle Moore"
+date: "Friday of Week 1, 04/01/2022"
+output: pdf_document
+urlcolor: blue
+---
+
+This is a template `Rmarkdown` file. Please find your partners and form a group for the assignments and final project. It is better to not change after your group is fixed. 
+
+
+Please read `Math189_HW_template.Rmd` carefully when you write your reports, and use the template file `Math189_HW_template.Rmd` to generate your reports. If you generate your report as a html file, please save it as a pdf file. Please submit your report to **Gradescope** before the deadline. 
+
+***
+
+# Question 0 
+Please write down you name and ID like below: 
+
+### Member 1: 
+* Name: Minh Luc
+* Student ID: 
+
+### Member 2: 
+
+* Name: Kyle Moore
+* Student ID: A14271413
+
+### Member 3: 
+
+* Name: Devin Pham
+* Student ID: 
+
+***
+
+In what follows, you are asked to answer some questions on some basic concepts in probability and statistics. Some of the questions have been solved, and you can use the format to answer the other questions. 
+
+# Question 1. 
+
+*Let $Z \sim N(0,1)$.
+Read the [`R` documentation webpage](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/Normal), and use `R` to find the following:* 
+
+(a) *$P(Z > 1)$*; 
+
+	**Answer:**
+	The probability can be calculated by 
+	```{r}
+	p <- pnorm(q = 1,mean = 0,sd = 1,lower = FALSE)
+	print(p)
+	p3 <- round(p, digits = 3) # x rounded to 3 decimal places    
+	print(p3)
+	```
+	Therefore, 
+	$$
+		P(Z > 1) \approx 0.159. 
+	$$ 
+	We can use the `$$...$$` environment to write a displaystyle math formula. 
+
+	If you want an inline math formula, simply use $P(Z > 1) \approx 0.159$. 
+
+	Or, we can use inline `R` code in the \LaTeX{} environment to cite the value of $x$: 
+	$$
+		P(Z > 1) = `r p` \approx `r round(p,3)`.
+	$$
+	For more \LaTeX{} basics, please refer to [this webpage](https://www.statpower.net/Content/310/R%20Stuff/SampleMarkdown.html).
+	 
+
+
+
+(b) *$P(Z < -1.06)$;* 
+(c) *$P(-2.33 < Z \leq 1.06)$.*
+
+
+*** 
+
+
+# Question 2. 
+
+*Let $(X,Y)$ be a random vector whose pdf is given by* 
+$$
+	f_{X,Y}(x,y) = \frac{2}{3}(x  + 2y), \quad 1 \leq x \leq 1,  0 \leq y \leq 1. 
+$$
+
+(a) *Find the marginal distribution of $X$.* 
+
+	**Answer:**
+	The marginal distribution of $X$ is given by 
+	$$
+	\begin{aligned}
+		f_{X}(x) & =  \int_0^1 f_{X, Y} (x, y) dy \\
+				 & = \int_0^1 \biggl( \frac{2}{3}(x + 2y) \biggr) dy \\
+				 & = \frac{2}{3} x \int_0^1 dy + \frac{2}{3} \int_0^1 2y dy \\
+				 & = \frac{2}{3} x \times 1 + \frac{2}{3} \times y^2 \Big\vert_0^1 \\
+				 & = \frac{2}{3} x + \frac{2}{3}, \quad 0 \leq x \leq 1. 
+	\end{aligned}
+	$$
+	Like this, if you want to split a long equation into several lines, you can use `\begin{aligned} ... \end{aligned}` environment or `\begin{split} ... \end{split}` environment inside the `$$ ... $$` environment. Please note that blank lines are not allowed in the `$$ ... $$` environment, otherwise the compile will not be successful. The double backslash `\\` at the end of each line works as a newline character. Use the ampersand character &, to set the points where the equations are vertically aligned. 
+	 
+(b) *Find the marginal distribution of $Y$.* 
+
+(c) *Find $E(X)$, $E(Y)$, $\mathrm{Var}(X)$ and $\mathrm{Var}(Y)$*. 
+(d) *Find $\mathrm{Cov}(X, Y)$*. 
+(e) *Find $\mathrm{Cor}(X, Y)$*. 
+ 
+
+***
+
+# Question 3. 
+
+(a) *Let $n \geq 1$ and let $X_1, \dots, X_n$ be a sample from $N(\mu, \sigma^2)$, where $\mu$ and $\sigma^2$ are both unknown.  Provide an estimator $\hat{\mu}$ of the unknown parameter $\mu$?*
+
+	
+	**Answer:**
+	An estimator of the population mean is given by 
+$$
+	\hat{\mu} = \bar{X} = \frac{1}{n} \sum_{i = 1}^n X_i = \frac{1}{n} (X_1 + \dots + X_n).
+$$
+	 
+
+(b) *Following (a), provide an estimator $\hat{\sigma}^2$ of the unknown parameter $\sigma^2$*.
+
+(c) *Read the 
+[`R` documentation webpage](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/Normal) again, and use `rnorm` to generate `n = 10` normal random numbers with `mean = 1` and `sd = 3`*. 
+
+	```{r}
+	rnorm(n = 10, mean = 1, sd = 3)
+	```
+	
+	However, when we re-run the line above, the result is different: 
+
+	```{r}
+	rnorm(n = 10, mean = 1, sd = 3)
+	```
+	
+	To keep the results unchanged, we can set a random seed every time before we use the `rnorm` function: 
+	```{r} 
+	set.seed(1)
+	rnorm(n = 10, mean = 1, sd = 3)
+	set.seed(1)
+	rnorm(n = 10, mean = 1, sd = 3)
+	```
+
+	*Now, choose an arbitrary integer as your own seed, and generate `n = 5` normal random numbers with `mean = 2` and `sd = 1`.
+	Based on (a), find your value of $\hat{\mu}$ using your random numbers and find the difference between $\hat{\mu}$ and the true mean $\mu$*. 
+
+(d) *Discuss how can you estimate $\mu$ more accurately, and explain your idea*. 
