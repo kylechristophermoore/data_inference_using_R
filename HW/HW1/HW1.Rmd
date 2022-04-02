@@ -250,6 +250,13 @@ $$
 
 (b) *Following (a), provide an estimator $\hat{\sigma}^2$ of the unknown parameter $\sigma^2$*.
 
+    *Let* $n \geq 1$ and let $X_1, \dots, X_n$ be a sample from $N(\mu, \sigma^2)$, where $\mu$ and $\sigma^2$ are both unknown.\linebreak 
+    **Answer:** An estimator of the population variance is given by
+    
+  $$
+    \hat{\sigma}^2 = {s^2} = \frac{\sum_{i = 1}^n (X_i - \bar{X})^2}{n-1}
+  $$
+
 (c) *Read the 
 [`R` documentation webpage](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/Normal) again, and use `rnorm` to generate `n = 10` normal random numbers with `mean = 1` and `sd = 3`*. 
 
@@ -273,5 +280,22 @@ $$
 
 	*Now, choose an arbitrary integer as your own seed, and generate `n = 5` normal random numbers with `mean = 2` and `sd = 1`.
 	Based on (a), find your value of $\hat{\mu}$ using your random numbers and find the difference between $\hat{\mu}$ and the true mean $\mu$*. 
+	
+    **Answer:**
+    ```{r}
+    mu <- 2
+    set.seed(2)
+    rnorm(n = 5, mean = mu, sd = 1)
+    set.seed(2)
+    muHat <- mean(rnorm(n = 5, mean = mu, sd = 1))
+    diff <- muHat - mu
+    print(muHat)
+    print(diff)
+    ```
+
+    Value of $$\hat{\mu} - \mu \approx -0.067$$
 
 (d) *Discuss how can you estimate $\mu$ more accurately, and explain your idea*. 
+
+    We can set n to a higher value and/or set sd to a smaller value. The higher the value of n, the closer we will get to $\mu$,     which is stated by the Law of Large Numbers. Setting the sd to a smaller value will reduce the spread of values from $\mu$.     Without altering the distribution itself, we could minimize the MSE by setting $a$ to the sample mean in the mean squared 
+    error fucntion $MSE(a) = \frac{1}{n-1} \sum_{i = 1}^n (x_i - a)^2$
