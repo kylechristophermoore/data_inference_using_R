@@ -12,6 +12,7 @@ This is a template `Rmarkdown` file. Please find your partners and form a group 
 Please read `Math189_HW_template.Rmd` carefully when you write your reports, and use the template file `Math189_HW_template.Rmd` to generate your reports. If you generate your report as a html file, please save it as a pdf file. Please submit your report to **Gradescope** before the deadline. 
 
 ***
+### We all contributed equally for this homework.
 
 # Question 0 
 Please write down you name and ID like below: 
