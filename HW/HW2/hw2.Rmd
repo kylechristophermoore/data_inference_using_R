@@ -85,17 +85,65 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * **(a)**:
 
+    ```{r}
+    A <- cor(X) # assign the previous correlation matrix to A
+    
+    2 * A # scalar multiplication of A by 2
+    ```
+
 * **(b)**:
+
+    ```{r}
+    set.seed(3) # replace 1 by your own choice
+    B <- matrix(rnorm(16),nrow=4) # generates a random normal matrix and assigns it to B
+    
+    C <- t(B) * B # assign B' * B to C
+    
+    print(C)
+    ```
+    
+  * C is symmetric.
 
 * **(c)**:
 
+    ```{r}
+    a <- 2
+    b <- 3
+    
+    (a * A) + (b * B)
+    ```
+
 * **(d)**:
 
+    ```{r message=FALSE, warning=FALSE}
+    eigen(A)
+    eigen(A)$values # eigen values
+    eigen(A)$vectors  # eigen vectors
+    
+    library(expm)
+    
+    sqrtm(A)  # square root the matrix A
+    ```
+    
 ***
 
 # Question 4
 
+* **Create a new dataset $Y$, where $Y_1 = 3X_1 + 2X_2, Y_2 = X_2 + X_3 + X_4$**
 
+    ```{r}
+    Y <- data.frame(matrix(ncol = 2, nrow = 333)) # create new empty dataframe
+    colnames(Y) <- c('Y_1', 'Y_2')  # label columns
+    
+    Y['Y_1'] <- as.matrix((3* X[, 1]) + (2 * X[, 2])) # linear combination of X into new column
+    Y['Y_2'] <- as.matrix(X[, 2] + X[, 3] + X[, 4]) # linear combination of X into new column
+    
+    head(Y) # show first rows of Y
+    
+    colMeans(Y) # mean vector containing the means for each column in Y
+    
+    cov(Y) # compute the covariance matrix of Y
+    ```
 
 ***
 
