@@ -1,0 +1,112 @@
+---
+title: "HW2"
+author: "Minh Luc, Devin Pham, Kyle Moore"
+date: "Friday of Week 2, 04/08/2022"
+output: 
+  pdf_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+### We all contributed equally for this homework.
+
+# Question 0 
+
+### Member 1: 
+* Name: Minh Luc
+* Student ID: A17209607
+
+### Member 2: 
+
+* Name: Kyle Moore
+* Student ID: A14271413
+
+### Member 3: 
+
+* Name: Devin Pham
+* Student ID: A17198936
+
+***
+
+# Question 1
+
+* **(a)**
+
+    ```{r warning=FALSE}
+    # install the packages if needed by using
+    # install.packages("...")
+    library(tidyr)
+    library(readr)
+    library(tidytuesdayR)
+    urlRemote <- 'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/'
+    pathGithub <- 'data/2020/2020-07-28/'
+    fileName <- 'penguins.csv'
+    penguins <- paste0(urlRemote, pathGithub, fileName) %>% read.csv(header = TRUE)
+    dfr <- drop_na(as.data.frame(penguins))
+    head(dfr)
+    ```
+
+* **(b)**
+
+    ```{r warning=FALSE}
+    nrow(dfr) # number of rows
+    ncol(dfr) # number of columns
+    ```
+  
+  There are `r nrow(dfr)` rows and `r ncol(dfr)` columns in the dataframe(dfr).
+
+***
+
+# Question 2
+
+* **Find the mean vector, covariance matrix and correlation matrix of X:**
+
+    ```{r}
+    X <- dfr[,3:6] # assign all rows, but only columns 3-6 to X
+
+    colMeans(X) # mean vector containing the means for each column in X
+    
+    cov(X) # compute the covariance matrix of X
+    
+    cor(X) # compute the correlation matrix of X
+    ```
+
+* The variance-covariance matrix is a symmetric matrix that represents how the variables are correlated: positively correlated, negatively correlated, or uncorrelated. The diagonal         represents the variance of each variable itself. It is symmetric due to the fact that $\mathrm{Cov}(X,Y) = \mathrm{Cov}(Y,X)$.
+
+* The correlation matrix is a standardized version of the variance-covariance matrix that represents the strength of the correlation between two variables where $-1 \leq correlation        \leq 1$. Entries closer to 1 are more strongly positively correlated, those closer to -1 are strongly negatively correlated, and those near 0 are weakly or uncorrelated. The diagonals     are all 1's because each variable is completely correlated with itself.
+
+***
+
+# Question 3
+
+* **(a)**:
+
+* **(b)**:
+
+* **(c)**:
+
+* **(d)**:
+
+***
+
+# Question 4
+
+
+
+***
+
+# Question 5
+
+* **(a)**:
+
+* **(b)**:
+
+* **(c)**:
+
+* **(d)**:
+
+***
