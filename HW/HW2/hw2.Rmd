@@ -151,10 +151,57 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * **(a)**:
 
+  We can find $\hat{a} = argmin L(a)$ by setting $\frac{d}{da} L(a) = 0$
+  
+  First, we find $\frac{d}{da} L(a)$:
+  
+	$$
+	\begin{aligned}
+		 \frac{d}{da} L(a) & = \frac{d}{da} \frac{1}{n} \sum_{i=1}^n (X_i - a)^2\\
+				 & = \frac{1}{n} \sum_{i=1}^n -2(X_i - a) \\
+				 & = \frac{-2}{n} \sum_{i=1}^n (X_i - a) \\
+	\end{aligned}
+	$$
+  Then we set the derivative equal to 0:
+  
+	$$
+	\begin{aligned}
+		  0 & = \frac{-2}{n} \sum_{i=1}^n (X_i - a) \\
+		  0 & = \sum_{i=1}^n (X_i - a) \\
+	\end{aligned}
+	$$
+  
+  We know that the sum of each sample component minus the sample mean equals 0, therefore $\hat{a} = \bar{X}$
+
 * **(b)**:
 
+  Plugging $a = \hat{a} = \bar{X}$ into $L(a) = \frac{1}{n} \sum_{i=1}^n (X_i - a)^2$ gives us:
+  
+  $$
+    L(\bar{X}) = \frac{1}{n} \sum_{i=1}^n (X_i - \bar{X})^2
+  $$
+  
+  We recognize this minimum value as the equation for the sample variance, therefore $L(\hat{a}) = S^2$
+  
 * **(c)**:
 
+  $\hat{a}$ is an unbiased estimator of population mean because with many samples, the expectation of the sample mean would be equal to the population mean, or $E(\bar{X}) = \mu$.
+  
+  This can be proven by:
+  
+  $$
+	\begin{aligned}
+		  E(\bar{X}) & = E\bigg(\frac{X_1 + X_2 + ... + X_n}{n}\bigg) \\
+		    & = \frac{1}{n} E(X_1 + X_2 + ... + X_n) \\
+		    & = \frac{1}{n} E(X_1) + E(X_2) + ... + E(X_n) \\
+		    & = \frac{1}{n} (\mu + \mu + ... + \mu) \\
+		    & = \frac{1}{n} n\mu \\
+		    E(\bar{X}) & = \mu \\
+	\end{aligned}
+	$$
+
 * **(d)**:
+
+  $L(\hat{a})$ is a biased estimator of the population variance due to the fact that $0 = \sum_{i=1}^n (X_i     - \bar{X})$, meaning we only need to solve $n - 1$ of the deviations because the final one will always be     set, or in other words, there are only $n - 1$ degrees of freedom but we are dividing by $n$.
 
 ***
