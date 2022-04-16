@@ -1,0 +1,200 @@
+---
+title: "HW3"
+author: "Minh Luc, Devin Pham, Kyle Moore"
+date: "Friday of Week 3, 04/15/2022"
+output: 
+  pdf_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+### We all contributed equally for this homework.
+
+# Question 0 
+
+### Member 1: 
+* Name: Minh Luc
+* Student ID: A17209607
+
+### Member 2: 
+
+* Name: Kyle Moore
+* Student ID: A14271413
+
+### Member 3: 
+
+* Name: Devin Pham
+* Student ID: A17198936
+
+***
+
+```{r warning=FALSE}
+# install the packages if needed by using
+# install.packages("...")
+library(tidyr)
+library(readr)
+library(tidytuesdayR)
+urlRemote <- 'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/'
+pathGithub <- 'data/2020/2020-07-28/'
+fileName <- 'penguins.csv'
+penguins <- paste0(urlRemote, pathGithub, fileName) %>% read.csv(header = TRUE)
+dfr <- drop_na(as.data.frame(penguins))
+head(dfr)
+```
+
+***
+
+# Question 1
+
+* **Answer:**
+
+```{r warning=FALSE}
+library(ggplot2)
+
+scatter_plot <- ggplot(dfr, aes(x = flipper_length_mm, y = bill_length_mm, col = species)) + geom_point()
+scatter_plot + labs(x = 'Flipper Length(mm)', y = 'Bill Length(mm)', color = "Species")
+
+```
+
+***
+
+# Question 2
+
+* **Answer:**
+
+  We can see that the Chinstrap species doesn't follow the same linear pattern as the other two species, it is above them, meaning that species has a different relationship between its flipper and bill lengths. If species had no effect on the relationship then they would all follow the same pattern. We can also tell that the sizes of the different species are noticeably different when viewing the samples distributions and their relative location in the scatter plot.
+  
+***
+
+# Question 3
+
+* **(a)**
+  The sample mean, $\bar{X}$, is an unbiased estimator of the population mean, $\mu$.
+
+    ```{r}
+      sample_mean <- mean(dfr$flipper_length_mm)  # sample mean of the flipper length column
+      print(sample_mean)
+    ```
+
+* **(b)**
+
+    ```{r}
+      n <- nrow(dfr)  # number of rows, also number of observations
+      sample_sd <- sd(dfr$flipper_length_mm)  # sample standard deviation
+      
+      print(n)
+      print(sample_sd)
+      
+      # two-tailed t-score with 95% confidence times the sample standard error
+      margin <- qt(0.05/2,df=n-1) * (sample_sd/sqrt(n))
+      
+      print(margin)
+      
+      # find the lower and upper confidence intervals
+      lower_interval <- sample_mean - margin
+      upper_interval <- sample_mean + margin
+      
+      print(lower_interval)
+      print(upper_interval)
+    ```
+    
+* **(c)**
+
+    ```{r}
+      t.test(dfr$flipper_length_mm, mu = 35)  # t-test of flipper length with a mu of 35
+    ```
+    
+    Here we got a p-value of 2.2E-16 which is $\approx 0$ and our $|t|$ is large, therefore we reject the null hypothesis that $\mu_0 = 35$.
+    
+***
+
+# Question 4
+
+* **(a)**
+
+  By looking at the corresponding components of $\boldsymbol\mu, \boldsymbol\Sigma$, we see that $X_1$ is normally distributed with $\mu = 2$ and $Var(X_1) = 3$, or $X_1 \sim N(2,3)$
+
+* **(b)**
+
+  By checking $\boldsymbol\Sigma$ for the covariances of $X_1$ and $X_3$, $X_2$ and $X_3$, we see that $\mathrm{Cov}(X_1,X_3) = \mathrm{Cov}(X_2,X_3) = 0$ which means they are independent.
+
+* **(c)**
+
+  Using $\boldsymbol a^T\boldsymbol X = a_1X_1 + a_2X_2 + a_3X_3$, we see that $a=(2, -3, 1)^T$
+  
+  Since $\boldsymbol X \sim N_3(\boldsymbol \mu, \boldsymbol \Sigma)$, then $\boldsymbol a^T \boldsymbol X \sim N(\boldsymbol a^T \boldsymbol\mu, \boldsymbol a^T \boldsymbol\Sigma \boldsymbol a)$.
+  
+    ```{r}
+    
+      sigma <- cbind(c(3,-1,0),c(-1,4,0),c(0,0,2))
+      mu <- c(2,-1,4)
+      a <- c(2,-3,1)
+      
+      print(mu)
+      print(sigma)
+      print(a)
+      
+      t(a) %*% mu   # a^T * mu
+      
+      t(a) %*% sigma %*% a  # a^T * Sigma * a
+      
+    ```
+    
+  Using the results above: $\boldsymbol a^T \boldsymbol X \sim N(\boldsymbol a^T \boldsymbol\mu, \boldsymbol a^T \boldsymbol\Sigma \boldsymbol a) = \boldsymbol a^T \boldsymbol X \sim N(11, 62)$ 
+
+* **(d)**
+
+    ```{r}
+      library("mvtnorm")
+    
+      m = 9
+      
+      set.seed(m)
+      
+      random_vectors <- rmvnorm(n=100, mean=mu, sigma=sigma) # 100 random vectors
+      
+      pairs(random_vectors, pch=20) # plot pairwise scatter plots
+    ```
+
+* **(e)**
+
+    ```{r}
+      sample_mean_vector <- colMeans(random_vectors)  # find the sample mean vector
+      print(sample_mean_vector)
+      
+      sample_cov_matrix <- cov(random_vectors)  # find the sample covariance matrix
+      print(sample_cov_matrix)
+      
+      T2 <- 100 * t(sample_mean_vector - mu) %*% solve(sample_cov_matrix) %*% (sample_mean_vector - mu)
+      
+      print(T2)
+    ```
+
+* **(f)**
+
+    ```{r}
+      B <- 200
+      T2 <- rep(0,B)
+      
+      for (b in 1:B) {
+        set.seed(m+b) # set new random seed
+        random_vectors <- rmvnorm(n=100, mean=mu, sigma=sigma)  # generate random vectors
+        sample_mean_vector <- colMeans(random_vectors)  # find sample mean vector
+        sample_cov_matrix <- cov(random_vectors)  # find sample covariance matrix
+        
+        #find new T^2 and assign it to the index of the current iteration
+        T2[b] <- 100 * t(sample_mean_vector - mu) %*% solve(sample_cov_matrix) %*% (sample_mean_vector - mu)
+      }
+      
+      print(T2)
+    ```
+
+* **(g)**
+
+    ```{r}
+      hist(T2)  # create histogram of T2
+    ```
