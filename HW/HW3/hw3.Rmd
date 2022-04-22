@@ -66,7 +66,7 @@ scatter_plot + labs(x = 'Flipper Length(mm)', y = 'Bill Length(mm)', color = "Sp
 
 * **Answer:**
 
-  We can see that the Chinstrap species doesn't follow the same linear pattern as the other two species, it is above them, meaning that species has a different relationship between its flipper and bill lengths. If species had no effect on the relationship then they would all follow the same pattern. We can also tell that the sizes of the different species are noticeably different when viewing the samples distributions and their relative location in the scatter plot.
+  We can see that the Chinstrap species doesn't follow the same linear pattern as the other two species, it is above them, meaning that species has a different relationship between its flipper and bill lengths. If species had no effect on the relationship then they would all follow the same pattern and be evenly distributed across the range of values. We can also tell that the sizes of the different species are noticeably different when viewing the species' distributions and their relative location in the scatter plot.
   
 ***
 
@@ -151,7 +151,7 @@ scatter_plot + labs(x = 'Flipper Length(mm)', y = 'Bill Length(mm)', color = "Sp
     ```{r}
       library("mvtnorm")
     
-      m = 9
+      m = 1
       
       set.seed(m)
       
@@ -169,7 +169,8 @@ scatter_plot + labs(x = 'Flipper Length(mm)', y = 'Bill Length(mm)', color = "Sp
       sample_cov_matrix <- cov(random_vectors)  # find the sample covariance matrix
       print(sample_cov_matrix)
       
-      T2 <- 100 * t(sample_mean_vector - mu) %*% solve(sample_cov_matrix) %*% (sample_mean_vector - mu)
+      T2 <- 100 * t(sample_mean_vector - mu) %*% solve(sample_cov_matrix) %*% 
+        (sample_mean_vector - mu)
       
       print(T2)
     ```
@@ -187,7 +188,8 @@ scatter_plot + labs(x = 'Flipper Length(mm)', y = 'Bill Length(mm)', color = "Sp
         sample_cov_matrix <- cov(random_vectors)  # find sample covariance matrix
         
         #find new T^2 and assign it to the index of the current iteration
-        T2[b] <- 100 * t(sample_mean_vector - mu) %*% solve(sample_cov_matrix) %*% (sample_mean_vector - mu)
+        T2[b] <- 100 * t(sample_mean_vector - mu) %*% solve(sample_cov_matrix) %*% 
+          (sample_mean_vector - mu)
       }
       
       print(T2)
@@ -198,3 +200,5 @@ scatter_plot + labs(x = 'Flipper Length(mm)', y = 'Bill Length(mm)', color = "Sp
     ```{r}
       hist(T2)  # create histogram of T2
     ```
+
+  This distribution is one tailed and matches with our knowledge of the $T^2$ distribution. We expect it to be mostly lower values because our sample mean vector and our actual mean are similar, and we see that the frequency of lower values is the highest and tails off.
