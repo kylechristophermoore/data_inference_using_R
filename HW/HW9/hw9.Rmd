@@ -1,0 +1,190 @@
+---
+title: "HW9"
+author: "Minh Luc, Devin Pham, Kyle Moore"
+date: "Friday of Week 9, 05/27/2022"
+output: 
+  pdf_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+### We all contributed equally for this homework.
+
+# Question 0 
+
+### Member 1: 
+* Name: Minh Luc
+* Student ID: A17209607
+
+### Member 2: 
+
+* Name: Kyle Moore
+* Student ID: A14271413
+
+### Member 3: 
+
+* Name: Devin Pham
+* Student ID: A17198936
+
+***
+
+\newpage
+
+# Question 1
+    
+* **(a)**
+
+    ```{r}
+    library(ISLR2)
+    library(splines)
+    boston_data <- Boston
+    
+    fit <- lm(nox ~ bs(dis), data = boston_data)
+    
+    dislims <- range(boston_data$dis)
+    dis.grid <- seq(from = dislims[1], to = dislims[2])
+    
+    pred <- predict(fit, newdata = list(dis = dis.grid), se = T)
+    summary(fit)
+    
+    
+    plot(boston_data$dis, boston_data$nox, col = "gray")
+    lines(dis.grid, pred$fit, lwd = 2)
+    lines(dis.grid, pred$fit + 2 * pred$se, lty = "dashed")
+    lines(dis.grid, pred$fit - 2 * pred$se, lty = "dashed")
+    ```
+    
+* **(b)**
+
+    ```{r}
+    fit <- lm(nox ~ ns(dis, df = 4), data = boston_data)
+    
+    pred <- predict(fit, newdata = list(dis = dis.grid), se = T)
+    summary(fit)
+    
+    
+    plot(boston_data$dis, boston_data$nox, col = "gray")
+    lines(dis.grid, pred$fit, lwd = 2)
+    lines(dis.grid, pred$fit + 2 * pred$se, lty = "dashed")
+    lines(dis.grid, pred$fit - 2 * pred$se, lty = "dashed")
+    
+    attr(terms(fit), "predvars") # show chosen knots
+    ```
+
+    Knots were chosen by ns() as the quartiles at 25, 50, and 75% of the data as seen above, and the boundary knots defaulted to the range of the data.
+    
+* **(c)**
+
+    ```{r}
+    rss <- list()
+    for (i in 1:10) {
+      fit <- lm(nox ~ ns(dis, df = i), data = boston_data)
+      pred <- predict(fit, newdata = list(dis = dis.grid), se = T)
+      rss[i] <- sum((fit$residuals) ^ 2) # RSS
+      
+      plot(boston_data$dis, boston_data$nox, col = "gray", main = i)
+      lines(dis.grid, pred$fit, lwd = 2)
+      lines(dis.grid, pred$fit + 2 * pred$se, lty = "dashed")
+      lines(dis.grid, pred$fit - 2 * pred$se, lty = "dashed")
+    }
+    
+    print(rss) # print the residual sum of squares for all dfs.
+    ```
+    
+    We can see that the higher the df/knots the better the fit to the data. This makes sense that an increase in model complexity increases accuracy on training data, but we must be careful for overfitting. 8-10 have similar RSS so I would be inclined to follow the parsimony principle and choose 8.
+    
+* **(d)**
+
+    ```{r}
+    library(boot)
+    set.seed(1)
+    cv.error = rep(0,20)
+    for(i in 1:20){
+      glm.fit = glm(nox ~ ns(dis, df = i), data = boston_data)
+      cv.error[i] = cv.glm(boston_data, glm.fit, K=10)$delta[1]
+    }
+    plot(cv.error,type="b",col="red3")
+    points(which.min(cv.error),min(cv.error),pch=16,col="red3")
+    ```
+    Similar to our graphed results above, except here df = 8 is the lowest error and best choice. We can see that 8-12 are similar in error again as well.
+    
+* **(e)**
+
+    ```{r}
+    fit <- smooth.spline(boston_data$dis, boston_data$nox, cv = TRUE)
+    fit$df # best df using LOOCV
+    
+    plot(boston_data$dis, boston_data$nox, xlim = dislims, cex = .5, col = "darkgrey")
+    lines(dis.grid, pred$fit, lwd = 2)
+    lines(dis.grid, pred$fit + 2 * pred$se, lty = "dashed")
+    lines(dis.grid, pred$fit - 2 * pred$se, lty = "dashed")
+    ```
+    
+
+***
+
+\newpage
+
+# Question 2
+    
+* **(a)**
+
+    ```{r}
+    weekly_data <- Weekly
+    
+    fit <- glm(Direction ~ Lag1 + Lag2, data = weekly_data, family = binomial)
+    summary(fit)
+    ```
+    
+* **(b)**
+
+    ```{r}
+    fit <- glm(Direction ~ Lag1 + Lag2, data = weekly_data[-1,], family = binomial)
+    summary(fit)
+    ```
+    
+* **(c)**
+
+    ```{r}
+    pred <- predict(fit, newdata = weekly_data[1,], type = 'response') # get predicted probability
+    pred
+    
+    weekly_data[1, 'Direction'] # get true label
+    ```
+    
+    The predicted probability is .5713923, which is > 0.5, therefore the model incorrectly predicted up because the ground truth was down.
+    
+* **(d)**
+
+    ```{r}
+    cv.error <- c()
+
+    for (i in 1:nrow(Weekly)) {
+      fit <- glm(Direction ~ Lag1 + Lag2, data = Weekly[-i, ], family = "binomial") # fit excluding ith obs
+      
+      # if prob response is > .5 then Up is predicted
+      # otherwise down is predicted
+      prob <- predict(fit, newdata = Weekly[i, ], type = "response")
+      pred <- ifelse(prob > 0.5, "Up", "Down")
+      
+      
+      # if prediction is correct, error is 0
+      # error is 1 for incorrect prediction
+      cv.error[i] <- ifelse(pred != Weekly[i, "Direction"], 1, 0)
+    }
+    ```
+    
+* **(e)**
+
+    ```{r}
+    mean(cv.error) # error rate for model
+    mean(c(ifelse(weekly_data[,'Direction'] == 'Up', 1, 0))) # percentage of weeks that were up
+    ```
+    
+    The error rate is ~.45 which is only slightly better than chance. Since the market has had a general upward trend over the years, we can see that just guessing up every single week would have given a ~55.5% chance of being correct, a 44.5% error rate, which is almost the exact same as our model. We would hope to be able to beat that 55.5% mark with a better model.
+    
+***

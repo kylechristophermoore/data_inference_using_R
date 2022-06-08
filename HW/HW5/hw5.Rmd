@@ -1,0 +1,195 @@
+---
+title: "HW5"
+author: "Minh Luc, Devin Pham, Kyle Moore"
+date: "Friday of Week 5, 04/29/2022"
+output: 
+  pdf_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+### We all contributed equally for this homework.
+
+# Question 0 
+
+### Member 1: 
+* Name: Minh Luc
+* Student ID: A17209607
+
+### Member 2: 
+
+* Name: Kyle Moore
+* Student ID: A14271413
+
+### Member 3: 
+
+* Name: Devin Pham
+* Student ID: A17198936
+
+***
+
+\newpage
+
+# Question 1
+
+* **(a)**
+
+$$
+  \begin{aligned}
+    \frac{\partial RSS(a,b)}{\partial a} &= \sum_{i=1}^{n} \frac{\partial}{\partial a} (y_i-a-bx_i)^2 \\
+      &= \sum_{i=1}^{n} -2(y_i-a-bx_i) \\
+      &= -2 \sum_{i=1}^{n} y_i + 2a \sum_{i=1}^{n} 1 + 2b \sum_{i=1}^{n}x_i\\
+      \\
+    \frac{\partial RSS(a,b)}{\partial b} &= \sum_{i=1}^{n} \frac{\partial}{\partial b} (y_i-a-bx_i)^2 \\
+      &= \sum_{i=1}^{n} -2x_i(y_i-a-bx_i) \\
+      &= -2 \sum_{i=1}^{n} x_i y_i + 2a \sum_{i=1}^{n} x_i + 2b \sum_{i=1}^{n}x_i^2
+  \end{aligned}
+$$
+
+* **(b)**
+
+  The estimators, $\hat\beta_0, \hat\beta_1$, can be found by setting the above partial derivatives equal to 0 to minimize them:
+$$
+  \begin{aligned}
+    \frac{\partial RSS(\hat \beta_0,\hat \beta_1)}{\partial \hat \beta_0} &= -2 \sum_{i=1}^{n} y_i + 2\hat \beta_0 \sum_{i=1}^{n} 1 + 2\hat \beta_1 \sum_{i=1}^{n}x_i \\
+      0 &= -2 \sum_{i=1}^{n} y_i + 2\hat \beta_0 \sum_{i=1}^{n} 1 + 2\hat \beta_1 \sum_{i=1}^{n}x_i \\
+      2 \sum_{i=1}^{n} y_i &= 2\hat \beta_0 n + 2\hat \beta_1 \sum_{i=1}^{n}x_i \\
+      2 \sum_{i=1}^{n} \frac{n}{n} y_i &= 2\hat \beta_0 n \frac{n}{n} + 2\hat \beta_1 \sum_{i=1}^{n} \frac{n}{n} x_i \\
+      2n \bar{y} &= 2n \hat \beta_0 + 2\hat \beta_1 n \bar{x} \\
+      \bar{y} &= \hat \beta_0 + \hat \beta_1 \bar{x} \\
+  \end{aligned}
+$$
+$$
+  \begin{aligned}
+    \frac{\partial RSS(\hat \beta_0,\hat \beta_1)}{\partial \hat \beta_1} &= \sum_{i=1}^{n} -2x_i(y_i - \hat \beta_0 - \hat \beta_1 x_i) \\
+    0 &= \sum_{i=1}^{n} -2x_i(y_i - \hat \beta_0 - \hat \beta_1 x_i) \\
+      &= \sum_{i=1}^{n} x_i(y_i - \hat \beta_0 - \hat \beta_1 x_i) \\
+    \text{Subsitute: } \hat \beta_0 = \bar{y} - \hat \beta_1 \bar{x} \\
+      &= \sum_{i=1}^{n} x_i(y_i - \bar{y} + \hat \beta_1 \bar{x} - \hat \beta_1 x_i) \\
+      &= \sum_{i=1}^{n} x_i(y_i - \bar{y}) - \sum_{i=1}^{n} \hat \beta_1 x_i(x_i - \bar{x}) \\
+      \sum_{i=1}^{n} \hat \beta_1 x_i(x_i - \bar{x}) &= \sum_{i=1}^{n} x_i(y_i - \bar{y}) \\
+      \hat \beta_1 &= \frac{\sum_{i=1}^{n} x_i(y_i - \bar{y})}{\sum_{i=1}^{n} x_i(x_i - \bar{x})} \\
+      \hat\beta_1 &= \frac {\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
+  \end{aligned}
+$$
+
+  So our estimators are:
+
+$$
+  \begin{aligned}
+    \hat\beta_1 &= \frac {\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
+      &= \frac{\mathrm{Cov}(x, y)}{\mathrm{Var}(x)} \\
+    \hat\beta_0 &= \bar{y} - \hat\beta_1 \bar{x} \\
+  \end{aligned}
+$$
+
+* **(c)**
+
+$$
+  \begin{aligned}
+    \hat\beta_1 &= \frac {\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
+      &= \frac {\sum_{i=1}^{n} (x_i - \bar{x})(\beta_1(x_i - \bar{x}) + (\epsilon_i - \bar{\epsilon}))} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
+      &= \frac {\sum_{i=1}^{n} (x_i - \bar{x})(\beta_1(x_i - \bar{x}))} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \; + \; \frac {\sum_{i=1}^{n} (x_i - \bar{x})(\epsilon_i - \bar{\epsilon})} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
+      &= \frac {{\beta_1}\sum_{i=1}^{n} (x_i - \bar{x})^2} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \; + \; \frac {\sum_{i=1}^{n} (x_i - \bar{x}) \epsilon_i} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \; + \; 0 \\
+      &= \beta_1 + \frac {\sum_{i=1}^{n} (x_i - \bar{x}) \epsilon_i} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
+    \mathrm{E}(\hat{\beta_1}) &= \beta_1 + \mathrm{E} \Bigg (\frac {\sum_{i=1}^{n} (x_i - \bar{x}) \epsilon_i} {\sum_{i=1}^{n} (x_i - \bar{x})^2} \Bigg ) \\
+      &= \beta_1
+  \end{aligned}
+$$
+
+  Therefore $\mathrm{E}(\hat \beta_1) = \beta_1$ and is unbiased.
+
+\newpage
+
+* **(d)**
+
+$$
+  \begin{aligned}
+    \mathrm{SE}(\hat\beta_1)^2 &= \frac{\sigma^2}{\sum_{i=1}^{n} (x_i - \bar{x})^2} \\
+      &= \frac{\sigma^2}{(n-1) \mathrm{Var}(x)} \\
+    \sqrt{\mathrm{SE}(\hat\beta_1)^2} &= \sqrt{\frac{\sigma^2}{(n-1) \mathrm{Var}(x)}} \\
+      &= \frac{\sigma}{\sqrt{(n-1) \mathrm{Var}(x)}} \\
+      &= \frac{\sigma}{\sqrt{n-1}\cdot  \mathrm{sd}(x)}
+  \end{aligned}
+$$
+
+# Question 2
+
+```{r}
+set.seed(2)
+beta0 <- 3
+beta1 <- 1
+x <- runif(100) - 0.5
+eps <- rnorm(100)
+y <- beta0 + beta1 * x + eps
+```
+
+* **(a)**
+
+    ```{r}
+    cov_xy <- cov(x,y)  # covariance of x, y
+    var_x <- var(x)     # variance of x, y
+    beta_1 <- cov_xy / var_x; beta_1  # beta_1 estimator
+    ```
+
+* **(b)**
+
+    ```{r}
+    m <- 3              # new seed choice
+    
+    set.seed(m)         # set new seed to m
+    beta0 <- 3
+    beta1 <- 1
+    x <- runif(100) - 0.5
+    eps <- rnorm(100)
+    y <- beta0 + beta1 * x + eps
+
+    cov_xy <- cov(x,y)  # covariance of x, y
+    var_x <- var(x)     # variance of x, y
+    beta_1 <- cov_xy / var_x; beta_1  # new beta_1 estimator
+    ```
+
+* **(c)**
+
+    ```{r}
+    B <- 500  # B = 500 for iteration
+    beta1.vec <- rep(0,B) # beta vector filled with 0s, of size B
+    
+    for (j in 1:B) {
+      set.seed(m + j) # set new seed to m + j
+      beta0 <- 3
+      beta1 <- 1
+      x <- runif(100) - 0.5
+      eps <- rnorm(100)
+      y <- beta0 + beta1 * x + eps
+
+      cov_xy <- cov(x,y)  # covariance of x, y
+      var_x <- var(x)     # variance of x, y
+      beta_1 <- cov_xy / var_x;  # new beta_1 estimator
+      beta1.vec[j] <- beta_1
+    }
+    
+    head(beta1.vec) # show first few indexes of beta vector
+    ```
+
+* **(d)**
+
+    ```{r}
+    mean(beta1.vec)
+    ```
+    
+  Here our sample mean estimator $\hat \beta_1 \approx 1.0278$ and our true $\beta_1 = 1$, therefor our estimator is very close to our true coefficient. This makes sense due to $\hat \beta_1$ being an unbiased estimator of $\beta_1$ as proved above.
+
+* **(e)**
+
+    ```{r}
+    hist(beta1.vec)
+    ```
+    
+  We can see here $\hat \beta_1$ is normally distributed with its mean centered at $\beta_1 = 1$ as we would expect.
+  
+***

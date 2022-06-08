@@ -1,0 +1,194 @@
+---
+title: "HW8"
+author: "Minh Luc, Devin Pham, Kyle Moore"
+date: "Friday of Week 8, 05/20/2022"
+output: 
+  pdf_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+### We all contributed equally for this homework.
+
+# Question 0 
+
+### Member 1: 
+* Name: Minh Luc
+* Student ID: A17209607
+
+### Member 2: 
+
+* Name: Kyle Moore
+* Student ID: A14271413
+
+### Member 3: 
+
+* Name: Devin Pham
+* Student ID: A17198936
+
+***
+
+\newpage
+
+# Question 1
+    
+* **(a)**
+
+    ```{r}
+    library(ISLR2)
+    data <- College
+    
+    set.seed(2)
+    
+    n <- nrow(data)
+    
+    train_index <- sample(1:n, size = n / 2)
+    
+    train <- data[train_index,]
+    test <- data[-train_index,]
+    ```
+    
+* **(b)**
+
+    ```{r}
+    train_lm <- lm(Apps ~ ., data = train) # fit model to training set
+
+    train_error <- mean((train$Apps - predict(train_lm))^2); train_error # train error
+    
+    test_error <- mean((test$Apps - predict(train_lm, test))^2); test_error # test error
+    ```
+
+* **(c)**
+
+    ```{r}
+    library(glmnet)
+    
+    x_train <- model.matrix(Apps ~ ., data = train)
+    y_train <- train$Apps
+    x_test <- model.matrix(Apps ~ ., data = test)
+    y_test <- test$Apps
+    
+    grid <- 10^seq(10,-2,length=100)
+    ridge.mod <- glmnet(x_train, y_train, alpha=0, lambda = grid)
+    
+    cv.out <- cv.glmnet(x_train, y_train, alpha=0, lambda = grid)
+    plot(cv.out)
+    
+    best_lam <- cv.out$lambda.min; best_lam # best lambda from cross validation
+    
+    ridge.pred <- predict(ridge.mod, s = best_lam, newx = x_test)
+    mean((ridge.pred - y_test)^2) # test error for ridge regression
+    ```
+
+* **(d)**
+
+    ```{r}
+    lasso_mod <- glmnet(x_train,y_train,alpha=1,lambda=grid)
+    plot(lasso_mod)
+    
+    cv.out <- cv.glmnet(x_train, y_train, alpha=1)
+    plot(cv.out)
+    
+    best_lam <- cv.out$lambda.min # best lambda from cross validation
+    
+    lasso_pred <- predict(lasso_mod,s=best_lam,newx = x_test)
+    mean((lasso_pred - y_test)^2) # test error for lasso
+    
+    lasso.coef = predict(lasso_mod,type="coefficients",s = best_lam)[1:19,]
+    lasso.coef
+    lasso.coef[lasso.coef!=0]
+    ```
+
+* **(e)**
+
+    ```{r}
+    library(pls)
+    
+    pcr.fit <- pcr(Apps ~ ., data = train, scale = TRUE, validation = "CV")
+    
+    summary(pcr.fit)
+    ```
+    
+    We choose $M = 17$ because that had the lowest estimated test error.
+
+    ```{r}
+    pcr.pred <- predict(pcr.fit, test, ncomp = 17)
+    mean((test$Apps - pcr.pred)^2) # test error for PCR
+    ```
+    
+***
+
+\newpage
+
+# Question 2
+    
+* **(a)**
+
+    ```{r}
+    library(ISLR2)
+    library(ggplot2)
+    
+    data2 <- Boston
+    
+    lm2 <- lm(nox ~ poly(dis, 3), data = data2) # fit a polynomial with p = 3
+    
+    summary(lm2)
+
+    ggplot(data = data2, aes(x = dis, y = nox)) +
+      geom_point(color = 'green4') +
+      geom_point(data = data2, mapping = aes(x = dis, y = nox), color = "grey") +
+      geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+      geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = FALSE, color = "red2") +
+      geom_smooth(method = "lm", formula = y ~ poly(x, 3), se = FALSE, color = "orange2")
+    ```
+
+* **(b)**
+
+    ```{r}
+      ggplot(data = data2, aes(x = dis, y = nox)) +
+        geom_point(color = 'green4') +
+        geom_point(data = data2, mapping = aes(x = dis, y = nox), color = "grey") +
+        geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = FALSE, color = "orange1") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 3), se = FALSE, color = "orange2") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 4), se = FALSE, color = "orange3") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 5), se = FALSE, color = "orange4") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 6), se = FALSE, color = "red1") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 7), se = FALSE, color = "red2") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 8), se = FALSE, color = "red3") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 9), se = FALSE, color = "red4") +
+        geom_smooth(method = "lm", formula = y ~ poly(x, 10), se = FALSE, color = "rosybrown")
+    
+    rss <- list()
+    
+    for (i in 1:10) {
+      lm_all <- lm(nox ~ poly(dis, i), data = data2)
+      lm_pred <- predict(lm_all)
+      rss[i] <- sum((data2$nox - lm_pred)^2) # RSS
+    }
+    
+    print(rss)
+    ```
+    
+* **(c)**
+
+    ```{r}
+    library(boot)
+    
+    cv.error = rep(0, 10)
+    for (i in 1:10) {
+      glm.fit = glm(nox ~ poly(dis, i), data = data2)
+      cv.error[i] = cv.glm(data2, glm.fit)$delta[1]
+    }
+    cv.error # list of errors
+    
+    which.min(cv.error) # minimum error in list
+    ```
+    
+    The index of the minimum error is 3, with error of 0.003874762.
+    
+***

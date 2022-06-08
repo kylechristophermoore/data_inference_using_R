@@ -1,0 +1,166 @@
+---
+title: "HW6"
+author: "Minh Luc, Devin Pham, Kyle Moore"
+date: "Friday of Week 6, 05/06/2022"
+output: 
+  pdf_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+### We all contributed equally for this homework.
+
+# Question 0 
+
+### Member 1: 
+* Name: Minh Luc
+* Student ID: A17209607
+
+### Member 2: 
+
+* Name: Kyle Moore
+* Student ID: A14271413
+
+### Member 3: 
+
+* Name: Devin Pham
+* Student ID: A17198936
+
+***
+
+\newpage
+
+# Question 1
+    
+* **(a)**
+    ```{r}
+    library(ISLR2)
+    
+    lm.fit = lm(mpg ~ acceleration, data=Auto)
+    1
+    summary(lm.fit)
+    ```
+    
+  **Answer:**
+  
+  $\hat{\beta_1} = 1.1976$ and our estimated standard error of $\hat{\beta_1} = .1298$.
+
+* **(b)**
+
+  **Answer:**
+  
+  Our test statistic is $t = \frac{\hat{\beta_1} - 0}{\widehat{\mathrm{SE}}(\hat{\beta_1})} = \frac{1.1976}{.1298} = 9.228$ which is confirmed in our summary output for the linear model, and our p-value $=2.2\mathrm{e}{-16}$. Therefore we can reject our null hypothesis that $H_0 : \hat\beta_1 = 0$.
+
+* **(c)**
+
+  **Answer:**
+  
+  Our residual standard error from the summart $= 7.08 = \hat\sigma$ and therefore $\hat\sigma^2 = 7.08^2 = 50.1264$.
+  
+* **(d)**
+    ```{r}
+    confint(lm.fit)
+    ```
+    
+  **Answer:**
+  
+  Our 95% confidence interval is (.9424566, 1.452792).
+  
+***
+  
+# Question 2
+    
+* **(a)**
+
+    ```{r}
+    lm.fit = lm(mpg ~ cylinders + displacement + horsepower + weight + 
+                  acceleration + year + origin, data=Auto)
+    
+    summary(lm.fit)
+    ```
+  
+  **Answer:**
+  
+  This model has 7 predictors and they are cylinders, displacement, horsepower, weight, acceleration, year, and origin.
+  
+* **(b)**
+
+  **Answer:**
+  
+  Using the summary above our coefficients are:
+  $$
+  \begin{aligned}
+  \text{Cylinders: }
+    \hat\beta_1 &= -0.493376 \\
+  \text{Displacement: }
+    \hat\beta_2 &= 0.019896 \\
+  \text{Horsepower: }
+    \hat\beta_3 &= -0.016951 \\
+  \text{Weight: }
+    \hat\beta_4 &= -0.006474 \\
+  \text{Acceleration: }
+    \hat\beta_5 &= 0.080576 \\
+  \text{Year: }
+    \hat\beta_6 &= 0.750773 \\
+  \text{Origin: }
+    \hat\beta_7 &= 1.426141 \\
+  \end{aligned}
+  $$
+  
+* **(c)**
+
+  **Answer:**
+  
+  Using the summary above our p-values are:
+  $$
+  \begin{aligned}
+  \text{Cylinders, }
+    \hat\beta_1: p-value &= 0.12780 \\
+  \text{Displacement, }
+    \hat\beta_2: p-value &= 0.00844 (**) \\
+  \text{Horsepower, }
+    \hat\beta_3: p-value &= 0.21963 \\
+  \text{Weight, }
+    \hat\beta_4: p-value &= < 2e-16 (***) \\
+  \text{Acceleration, }
+    \hat\beta_5: p-value &= 0.41548 \\
+  \text{Year, }
+    \hat\beta_6: p-value &= < 2e-16 (***) \\
+  \text{Origin, }
+    \hat\beta_7: p-value &= 4.67e-07 (***) \\
+  \end{aligned}
+  $$
+  
+  The variables that are helpful in predicting mpg are displacement$(\hat\beta_2 \text{ coefficient})$, weight$(\hat\beta_4 \text{ coefficient})$, year$(\hat\beta_6 \text{ coefficient})$, and origin$(\hat\beta_7 \text{ coefficient})$.
+  
+* **(d)**
+
+  **Answer:**
+  
+  Using the summary above, our F-statistic $= 252.4$,
+  
+  degrees of freedom of 7 and 384, 
+  
+  and $p-value:\space < 2.2\mathrm{e-16} \approx 0$.
+  
+* **(e)**
+    ```{r}
+    lm.fit = lm(mpg ~ cylinders + horsepower + acceleration, data=Auto)
+    
+    summary(lm.fit)
+    ```
+  **Answer:**
+  
+  Using the summary above our F-statistic $= 262.5$,
+  
+  degrees of freedom of 3 and 388, 
+  
+  and $p-value:\space < 2.2\mathrm{e-16} \approx 0$.
+  
+  Our p-value is very small so we can reject $H_0: \beta_1 = \beta_2 = \beta_3 = 0$. Among all of these predictors, there is at least one predictor that is helpful in predicting mpg.
+  
+***
